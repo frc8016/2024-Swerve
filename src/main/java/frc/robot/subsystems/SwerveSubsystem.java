@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 
 
 public class SwerveSubsystem {
@@ -21,14 +21,15 @@ public class SwerveSubsystem {
     WPI_PigeonIMU gyro;
     SwerveModule[] swerveModules; //psudo code
 
+
     public SwerveSubsystem() {
 
-        swerveModules = new SwerveModule[4]; // psudo code 
+        swerveModules = new SwerveModule[4];
 
-        swerveModules[0] = new SwerveModule(0, 0, 0);
-        swerveModules[1] = new SwerveModule(0, 0, 0);
-        swerveModules[2] = new SwerveModule(0, 0, 0);
-        swerveModules[3] = new SwerveModule(0, 0, 0);
+        swerveModules[0] = new SwerveModule(2, 1, 9);
+        swerveModules[1] = new SwerveModule(4, 3, 10);
+        swerveModules[2] = new SwerveModule(6, 5, 11);
+        swerveModules[3] = new SwerveModule(8, 7, 12);
 
         //kinematics
         kinematics = new SwerveDriveKinematics(
@@ -39,25 +40,49 @@ public class SwerveSubsystem {
         //translation 2ds that set the position of the module reletive to the center of the chassis 
         );
 
-        gyro = new WPI_PigeonIMU(0); // needs acutual id from constants 
-
-       
-
+        gyro = new WPI_PigeonIMU(0); // needs acutual id from constants
+        
+        odometry = new SwerveDriveOdometry(
+            kinematics,
+             gyro.getRotation2d(), 
+             new SwerveModulePosition[]
+                {new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition()},
+                 new Pose2d(0,0, new Rotation2d()));
 
     }
     //drive function 
     public void drive(){
-        ChassisSpeeds testSpeeds = new ChassisSpeeds(Units.inchesToMeters(14), Units.inchesToMeters(4), Units.degreesToRadians(30));
+  
+        ChassisSpeeds testSpeeds = new ChassisSpeeds(
+            Units.inchesToMeters(14), 
+            Units.inchesToMeters(4), 
+            Units.degreesToRadians(30));
 
         SwerveModuleState[] swerveModuleStates = kinematics.toSwerveModuleStates(testSpeeds);
 
+         swerveModules[0].setState(swerveModuleStates[0]);
+         swerveModules[1].setState(swerveModuleStates[1]);
+         swerveModules[2].setState(swerveModuleStates[2]);
+         swerveModules[3].setState(swerveModuleStates[3]);
+     
+
     }
+
     
     public SwerveModulePosition[] getCurrentModulePositions(){
         return new SwerveModulePosition[]{
+            new SwerveModulePosition(swerveModules[0].getDistance(), swerveModules[0].getAngle()),
+            new SwerveModulePosition(swerveModules[1].getDistance(), swerveModules[1].getAngle()),
+            new SwerveModulePosition(swerveModules[2].getDistance(), swerveModules[2].getAngle()),
+            new SwerveModulePosition(swerveModules[3].getDistance(), swerveModules[3].getAngle())
 
         };
     }
 
+@Override
+public void periodic() {
+        odometry.update(gyro.getRotation2d(), getCurrentModulePositions());
+    
+}
 
 }

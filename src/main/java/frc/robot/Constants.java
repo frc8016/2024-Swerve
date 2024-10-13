@@ -22,6 +22,11 @@ public final class Constants {
   }
 
   public static class SwerveDriveConstants{
+    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_0 = 169.716796875;
+    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_1 = 0;
+    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_2 = 0;
+    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_3 = 0;
+   
 
   }
 
