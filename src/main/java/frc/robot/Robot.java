@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -26,6 +27,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private SwerveSubsystem swerveSubsystem;
 //encoder
   private static Robot instance;
   private CANcoder absoluteEncoder;
@@ -33,6 +35,9 @@ public class Robot extends TimedRobot {
   //encoder 
   public Robot(){
     instance = this;
+
+    swerveSubsystem = new SwerveSubsystem();
+    //Scheduler.getInstance().addSubsystem(swerveSubsystem);
   }
   public static Robot getInstance(){
     return instance;

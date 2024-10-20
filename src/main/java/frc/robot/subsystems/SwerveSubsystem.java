@@ -11,7 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
+
 
 
 public class SwerveSubsystem {
@@ -71,18 +71,17 @@ public class SwerveSubsystem {
     
     public SwerveModulePosition[] getCurrentModulePositions(){
         return new SwerveModulePosition[]{
-            new SwerveModulePosition(swerveModules[0].getDistance(), swerveModules[0].getAngle()),
-            new SwerveModulePosition(swerveModules[1].getDistance(), swerveModules[1].getAngle()),
-            new SwerveModulePosition(swerveModules[2].getDistance(), swerveModules[2].getAngle()),
-            new SwerveModulePosition(swerveModules[3].getDistance(), swerveModules[3].getAngle())
+            new SwerveModulePosition(swerveModules[0].getDistance().getValue(), swerveModules[0].getAngle()),
+            new SwerveModulePosition(swerveModules[1].getDistance().getValue(), swerveModules[1].getAngle()),
+            new SwerveModulePosition(swerveModules[2].getDistance().getValue(), swerveModules[2].getAngle()),
+            new SwerveModulePosition(swerveModules[3].getDistance().getValue(), swerveModules[3].getAngle())
 
         };
     }
 
-@Override
-public void periodic() {
-        odometry.update(gyro.getRotation2d(), getCurrentModulePositions());
-    
-}
+
+ 
+  
+
 
 }
