@@ -15,20 +15,37 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kJoystickPort = 1;
   }
 
-  public static class SwerveModuleConstants {
-
-  }
-
-  public static class SwerveDriveConstants{
+  public static class SwerveDriveConstants {
+    // IDK if we need these
     public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_0 = 169.716796875;
     public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_1 = 0;
     public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_2 = 0;
     public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_3 = 0;
-   
-
+    // Module 0
+    public static final int SWERVE_DRIVE_MOTOR_0 = 2;
+    public static final int SWERVE_STEER_MOTOR_0 = 1;
+    public static final int SWERVE_ENCODER_0 = 9;
+    // Module 1
+    public static final int SWERVE_DRIVE_MOTOR_1 = 4;
+    public static final int SWERVE_STEER_MOTOR_1 = 3;
+    public static final int SWERVE_ENCODER_1 = 10;
+    // Module 2
+    public static final int SWERVE_DRIVE_MOTOR_2 = 6;
+    public static final int SWERVE_STEER_MOTOR_2 = 5;
+    public static final int SWERVE_ENCODER_2 = 11;
+    // Module 3
+    public static final int SWERVE_DRIVE_MOTOR_3 = 8;
+    public static final int SWERVE_STEER_MOTOR_3 = 7;
+    public static final int SWERVE_ENCODER_3 = 12;
   }
 
-
+  public static class SwerveModuleConstants {
+    public static final double ENCODER_TPR = 4096;
+    public static final double WHEEL_CIRCUMFERENCE = .5;
+    public static final double kDriveConversionFactor = (WHEEL_CIRCUMFERENCE * Math.PI) / ENCODER_TPR;
+    public static final double kSteerConversionFactor = (2 * Math.PI) / ENCODER_TPR;
+  }
 }
