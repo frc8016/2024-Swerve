@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -33,6 +34,15 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    m_SwerveSubsystem.setDefaultCommand(
+        new SwerveJoystickCmd(
+            m_SwerveSubsystem,
+            () -> -m_Joystick.getRawAxis(OperatorConstants.kDriverYAxis),
+            () -> m_Joystick.getRawAxis(OperatorConstants.kDriverXAxis),
+            () -> m_Joystick.getRawAxis(OperatorConstants.kDriverRotAxis),
+            () -> !m_Joystick.getRawButton(OperatorConstants.kDriverFieldOrientedButtonIdx)));
+
     // Configure the trigger bindings
     configureBindings();
   }
