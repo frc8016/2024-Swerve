@@ -158,4 +158,22 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveModules[2].setDesiredState(desiredState[2]);
     swerveModules[3].setDesiredState(desiredState[3]);
   }
+
+  public void print() {
+    System.out.println("Button pressed");
+  }
+
+  public void drive1(double speed) {
+    swerveModules[0].drive(speed);
+    swerveModules[1].drive(speed);
+    swerveModules[2].drive(speed);
+    swerveModules[3].drive(speed);
+  }
+
+  public void drive2(double rotation) {
+    swerveModules[0].turn(rotation);
+    swerveModules[1].turn(rotation);
+    swerveModules[2].turn(rotation);
+    swerveModules[3].turn(rotation);
+  }
 }

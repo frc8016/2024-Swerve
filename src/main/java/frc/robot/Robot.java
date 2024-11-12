@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // encoder code
-    absoluteEncoder = new CANcoder(10);
+    absoluteEncoder = new CANcoder(9);
     CANcoderConfigurator cfg = absoluteEncoder.getConfigurator();
     MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs();
     cfg.refresh(magnetSensorConfigs);
@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
         magnetSensorConfigs
             .withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1)
             .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();

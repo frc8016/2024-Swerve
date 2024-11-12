@@ -29,9 +29,9 @@ public class SwerveJoystickCmd extends Command {
     this.steerSpdFUnction = steerSpdFunction;
     this.fieldOrientedFunction = fieldOrientedFunction;
 
-    this.xLimiter = new SlewRateLimiter(0); // max acceleration
-    this.yLimiter = new SlewRateLimiter(0); // same as x
-    this.steerLimiter = new SlewRateLimiter(0); // max agluar acceleration
+    this.xLimiter = new SlewRateLimiter(.3); // max acceleration
+    this.yLimiter = new SlewRateLimiter(.3); // same as x
+    this.steerLimiter = new SlewRateLimiter(.3); // max agluar acceleration
     addRequirements(swerveSubsystem);
   }
 
@@ -50,7 +50,7 @@ public class SwerveJoystickCmd extends Command {
     ySpeed = Math.abs(ySpeed) > OperatorConstants.kDeadBand ? ySpeed : 0;
     steerSpeed = Math.abs(steerSpeed) > OperatorConstants.kDeadBand ? steerSpeed : 0;
 
-    // smooth drivine
+    // smooth driving
     xSpeed = xLimiter.calculate(xSpeed) * SwerveDriveConstants.kMaxSpeed;
     ySpeed = yLimiter.calculate(ySpeed) * SwerveDriveConstants.kMaxSpeed;
     steerSpeed = steerLimiter.calculate(steerSpeed) * SwerveDriveConstants.kAngularMaxSpeed;

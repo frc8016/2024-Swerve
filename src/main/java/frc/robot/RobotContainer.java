@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -30,7 +31,7 @@ public class RobotContainer {
   private final CommandXboxController m_XboxController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-  private final Joystick m_Joystick = new Joystick(0);
+  private final Joystick m_Joystick = new Joystick(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -38,13 +39,14 @@ public class RobotContainer {
     m_SwerveSubsystem.setDefaultCommand(
         new SwerveJoystickCmd(
             m_SwerveSubsystem,
-            () -> -m_Joystick.getRawAxis(OperatorConstants.kDriverYAxis),
-            () -> m_Joystick.getRawAxis(OperatorConstants.kDriverXAxis),
-            () -> m_Joystick.getRawAxis(OperatorConstants.kDriverRotAxis),
+            () -> -m_Joystick.getRawAxis(1),
+            () -> m_Joystick.getRawAxis(0),
+            () -> m_Joystick.getRawAxis(3),
             () -> !m_Joystick.getRawButton(OperatorConstants.kDriverFieldOrientedButtonIdx)));
 
     // Configure the trigger bindings
     configureBindings();
+    m_XboxController.x().onTrue(new RunCommand(() -> m_SwerveSubsystem.print(), m_SwerveSubsystem));
   }
 
   /**

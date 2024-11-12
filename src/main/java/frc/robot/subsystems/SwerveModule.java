@@ -41,6 +41,7 @@ public class SwerveModule {
       int cancoderCANID,
       boolean canCoderReversed) {
     // motors & encoder
+
     driveMotor = new TalonFX(driveMotorCANID);
     steerMotor = new TalonFX(steerMotorCANID);
     absoluteEncoder = new CANcoder(cancoderCANID);
@@ -89,7 +90,7 @@ public class SwerveModule {
   public double getSteerPosition() {
     return steerMotor.getPosition().getValue();
   }
-  // ok ai is like really dumb rn
+ 
   // returns the drive motors velocity in rotations per second
   public double getDriveVelocity() {
     return driveMotor.getVelocity().getValue();
@@ -100,7 +101,7 @@ public class SwerveModule {
   }
   // I decided to use radians :)
   // returns the abs encoder position in radians
-  // really again vs code??
+
   public double getAbsoluteEncoderRad() {
     return absoluteEncoder.getPosition().getValue() * Math.PI / 180;
   }
@@ -124,7 +125,6 @@ public class SwerveModule {
     return Rotation2d.fromRadians(steerMotor.getPosition().getValue());
   }
   // makeies the state
-  // I think im losing it;
   public void setState(SwerveModuleState state) {
     double tragetSpeed = state.speedMetersPerSecond;
     double targetAngle = state.angle.getRadians(); // degrees or radians?  Radians :)
@@ -157,5 +157,13 @@ public class SwerveModule {
   public void stop() {
     driveMotor.set(0);
     steerMotor.set(0);
+  }
+
+  public void drive(double speed) {
+    driveMotor.set(speed);
+  }
+
+  public void turn(double speed) {
+    steerMotor.set(speed);
   }
 }

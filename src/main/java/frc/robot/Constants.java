@@ -47,7 +47,7 @@ public final class Constants {
     public static final int SWERVE_STEER_MOTOR_3 = 7;
     public static final int SWERVE_ENCODER_3 = 12;
 
-    public static final double kMaxSpeed = 0.3;
+    public static final double kMaxSpeed = 0.1;
 
     public static final double kAngularMaxSpeed = 2 * 2 * Math.PI;
   }
