@@ -18,7 +18,7 @@ public final class Constants {
     public static final int kJoystickPort = 1;
     public static final int kDriverYAxis = 1;
     public static final int kDriverXAxis = 0;
-    public static final int kDriverRotAxis = 4;
+    public static final int kDriverRotAxis = 3;
     public static final int kDriverFieldOrientedButtonIdx = 1;
 
     public static final double kDeadBand = 0.05;
@@ -26,10 +26,14 @@ public final class Constants {
 
   public static class SwerveDriveConstants {
     // IDK if we need these
-    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_0 = 0;
-    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_1 = 0;
-    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_2 = 0;
-    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_3 = 0;
+    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_0 =
+        -2.35159519855 / SwerveModuleConstants.ENCODER_TPR; // radians .374512 rotations
+    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_1 =
+        -2.47277899357 / SwerveModuleConstants.ENCODER_TPR; // .393311 rotations
+    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_2 =
+        -6.05002258362 / SwerveModuleConstants.ENCODER_TPR; // .962891 rotations
+    public static final double ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_3 =
+        (-4.51910563397 / SwerveModuleConstants.ENCODER_TPR); // .719482 rotations
     // Module 0
     public static final int SWERVE_DRIVE_MOTOR_0 = 2;
     public static final int SWERVE_STEER_MOTOR_0 = 1;

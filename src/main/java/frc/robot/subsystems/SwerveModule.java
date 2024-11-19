@@ -25,6 +25,8 @@ public class SwerveModule {
 
   private PIDController turningPidController; // sobbing idk how to do pid well somebosy help me
 
+  private static Double absoluteEncoderAngleOfOffset;
+
   // TPR = ticks per revolution
   private static final double DRIVE_ENCODER_TPR = 4096;
   private static final double STEER_ENCODER_TPR = 4096;
@@ -39,7 +41,8 @@ public class SwerveModule {
       boolean driveMotorReversed,
       boolean steerMotorReversed,
       int cancoderCANID,
-      boolean canCoderReversed) {
+      boolean canCoderReversed,
+      double absoluteEncoderOffset) {
     // motors & encoder
 
     driveMotor = new TalonFX(driveMotorCANID);
@@ -52,9 +55,10 @@ public class SwerveModule {
     driveMotor.setInverted(driveMotorReversed);
     driveMotor.set(driveConversionFactor);
 
+    SwerveModule.absoluteEncoderAngleOfOffset = absoluteEncoderOffset;
+
     // encoders in the motors
     // Idk how to this correctly for krackens someobe help me
-    // Im litterally just a girl
     driveEncoder = driveMotor.getPosition().getValue();
     steerEncoder = steerMotor.getPosition().getValue();
 
@@ -90,7 +94,7 @@ public class SwerveModule {
   public double getSteerPosition() {
     return steerMotor.getPosition().getValue();
   }
- 
+
   // returns the drive motors velocity in rotations per second
   public double getDriveVelocity() {
     return driveMotor.getVelocity().getValue();
@@ -103,7 +107,9 @@ public class SwerveModule {
   // returns the abs encoder position in radians
 
   public double getAbsoluteEncoderRad() {
-    return absoluteEncoder.getPosition().getValue() * Math.PI / 180;
+    double angle =
+        ((absoluteEncoder.getPosition().getValue()) * 2 * Math.PI) - absoluteEncoderAngleOfOffset;
+    return angle;
   }
   // resets the encoders crazy right
   // sets the drive encoder (which idk if its even real at this point) to zero, and the steer
@@ -130,7 +136,7 @@ public class SwerveModule {
     double targetAngle = state.angle.getRadians(); // degrees or radians?  Radians :)
     // am i using these anywhare?
     double targetVelocity = tragetSpeed / driveConversionFactor;
-    double targetSteerAngle = targetAngle * (STEER_ENCODER_TPR / 360);
+    double targetSteerAngle = targetAngle * (STEER_ENCODER_TPR / 2 * Math.PI);
 
     // set target velocity
     driveMotor.set(targetVelocity);
@@ -163,7 +169,7 @@ public class SwerveModule {
     driveMotor.set(speed);
   }
 
-  public void turn(double speed) {
-    steerMotor.set(speed);
+  public void turn(double angle) {
+    steerMotor.set(angle);
   }
 }

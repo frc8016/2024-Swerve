@@ -31,7 +31,8 @@ public class SwerveSubsystem extends SubsystemBase {
             true,
             true,
             SwerveDriveConstants.SWERVE_ENCODER_0,
-            true);
+            true,
+            SwerveDriveConstants.ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_0);
     swerveModules[1] =
         new SwerveModule(
             SwerveDriveConstants.SWERVE_DRIVE_MOTOR_1,
@@ -39,7 +40,8 @@ public class SwerveSubsystem extends SubsystemBase {
             true,
             true,
             SwerveDriveConstants.SWERVE_ENCODER_1,
-            true);
+            true,
+            SwerveDriveConstants.ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_1);
     swerveModules[2] =
         new SwerveModule(
             SwerveDriveConstants.SWERVE_DRIVE_MOTOR_2,
@@ -47,7 +49,8 @@ public class SwerveSubsystem extends SubsystemBase {
             true,
             true,
             SwerveDriveConstants.SWERVE_ENCODER_2,
-            true);
+            true,
+            SwerveDriveConstants.ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_2);
     swerveModules[3] =
         new SwerveModule(
             SwerveDriveConstants.SWERVE_DRIVE_MOTOR_3,
@@ -55,11 +58,10 @@ public class SwerveSubsystem extends SubsystemBase {
             true,
             true,
             SwerveDriveConstants.SWERVE_ENCODER_3,
-            true);
-
+            true,
+            SwerveDriveConstants.ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_3);
     // kinematics
     // should probs throw this in constants
-
     kinematics =
         new SwerveDriveKinematics(
             new Translation2d(
@@ -104,7 +106,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
   // returns the angle but in a cool way
   public double getHeading() {
-    return Math.IEEEremainder(gyro.getAngle(), 360);
+    return Math.IEEEremainder(gyro.getAngle(), 2 * Math.PI);
   }
 
   public Rotation2d getRotation2d() {
@@ -142,6 +144,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Robot Heading", getHeading());
     SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+
+    SmartDashboard.putNumber("module 0", swerveModules[0].getAbsoluteEncoderRad());
+    SmartDashboard.putNumber("module 1", swerveModules[1].getAbsoluteEncoderRad());
+    SmartDashboard.putNumber("module 2", swerveModules[2].getAbsoluteEncoderRad());
+    SmartDashboard.putNumber("module 3", swerveModules[3].getAbsoluteEncoderRad());
   }
 
   public void stopModules() {

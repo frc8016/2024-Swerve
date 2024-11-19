@@ -5,11 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -33,15 +36,20 @@ public class RobotContainer {
 
   private final Joystick m_Joystick = new Joystick(1);
 
+  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    m_autoChooser.addOption("45 degrees", Autos.turn(m_SwerveSubsystem));
+    SmartDashboard.putData(m_autoChooser);
 
     m_SwerveSubsystem.setDefaultCommand(
         new SwerveJoystickCmd(
             m_SwerveSubsystem,
             () -> -m_Joystick.getRawAxis(1),
-            () -> m_Joystick.getRawAxis(0),
-            () -> m_Joystick.getRawAxis(3),
+            () -> -m_Joystick.getRawAxis(0),
+            () -> -m_Joystick.getRawAxis(3),
             () -> !m_Joystick.getRawButton(OperatorConstants.kDriverFieldOrientedButtonIdx)));
 
     // Configure the trigger bindings
@@ -74,7 +82,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
+    return m_autoChooser.getSelected();
     // An example command will be run in autonomous
 
   }
