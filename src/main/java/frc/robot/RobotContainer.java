@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -41,20 +42,21 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    m_autoChooser.addOption("45 degrees", Autos.turn(m_SwerveSubsystem));
+    // m_autoChooser.addOption("45 degrees", Autos.turn(m_SwerveSubsystem));
     SmartDashboard.putData(m_autoChooser);
+    m_autoChooser.addOption("start", Autos.start(m_SwerveSubsystem));
+    m_autoChooser.addOption("idk", Autos.idk(m_SwerveSubsystem));
 
     m_SwerveSubsystem.setDefaultCommand(
         new SwerveJoystickCmd(
             m_SwerveSubsystem,
             () -> -m_Joystick.getRawAxis(1),
             () -> -m_Joystick.getRawAxis(0),
-            () -> -m_Joystick.getRawAxis(3),
+            () -> -m_Joystick.getRawAxis(4), // for xbox controller ; 3 for logitech
             () -> !m_Joystick.getRawButton(OperatorConstants.kDriverFieldOrientedButtonIdx)));
 
     // Configure the trigger bindings
     configureBindings();
-    m_XboxController.x().onTrue(new RunCommand(() -> m_SwerveSubsystem.print(), m_SwerveSubsystem));
   }
 
   /**
@@ -74,8 +76,20 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_XboxController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-  }
 
+    m_XboxController
+        .x()
+        .onTrue(new StartEndCommand(() -> m_SwerveSubsystem.drive1(),
+        () -> m_SwerveSubsystem.stopModules(), m_SwerveSubsystem));
+  
+
+  m_XboxController.y().onTrue(
+    new RunCommand(
+     () -> m_SwerveSubsystem.setModuleStates(null), m_SwerveSubsystem
+
+    )
+  );
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

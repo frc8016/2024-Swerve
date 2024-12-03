@@ -20,6 +20,8 @@ public class SwerveSubsystem extends SubsystemBase {
   static WPI_PigeonIMU gyro;
   static SwerveModule[] swerveModules;
 
+  // PIDOutputGroup driveAllMotors;
+
   public SwerveSubsystem() {
 
     swerveModules = new SwerveModule[4];
@@ -56,7 +58,7 @@ public class SwerveSubsystem extends SubsystemBase {
             SwerveDriveConstants.SWERVE_DRIVE_MOTOR_3,
             SwerveDriveConstants.SWERVE_STEER_MOTOR_3,
             true,
-            true,
+            false,
             SwerveDriveConstants.SWERVE_ENCODER_3,
             true,
             SwerveDriveConstants.ABSOLUTE_ENCODER_ANGLE_OF_OFFSET_MODULE_3);
@@ -142,13 +144,18 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     odometry.update(getRotation2d(), getCurrentModulePositions());
 
+    swerveModules[0].reZeroEncoder();
+    swerveModules[1].reZeroEncoder();
+    swerveModules[2].reZeroEncoder();
+    swerveModules[3].reZeroEncoder();
+
     SmartDashboard.putNumber("Robot Heading", getHeading());
     SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
 
-    SmartDashboard.putNumber("module 0", swerveModules[0].getAbsoluteEncoderRad());
-    SmartDashboard.putNumber("module 1", swerveModules[1].getAbsoluteEncoderRad());
-    SmartDashboard.putNumber("module 2", swerveModules[2].getAbsoluteEncoderRad());
-    SmartDashboard.putNumber("module 3", swerveModules[3].getAbsoluteEncoderRad());
+    SmartDashboard.putNumber("module 0", swerveModules[0].reZeroEncoder());
+    SmartDashboard.putNumber("module 1", swerveModules[1].reZeroEncoder());
+    SmartDashboard.putNumber("module 2", swerveModules[2].reZeroEncoder());
+    SmartDashboard.putNumber("module 3", swerveModules[3].reZeroEncoder());
   }
 
   public void stopModules() {
@@ -165,22 +172,51 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveModules[2].setDesiredState(desiredState[2]);
     swerveModules[3].setDesiredState(desiredState[3]);
   }
+ 
 
-  public void print() {
-    System.out.println("Button pressed");
+  public void drive1() {
+    swerveModules[0].moveToAngle();
+    swerveModules[1].moveToAngle();
+    swerveModules[2].moveToAngle();
+    swerveModules[3].moveToAngle();
   }
 
-  public void drive1(double speed) {
-    swerveModules[0].drive(speed);
-    swerveModules[1].drive(speed);
-    swerveModules[2].drive(speed);
-    swerveModules[3].drive(speed);
+  public void setGoalAngle(double setpoint) {
+    swerveModules[0].setAngleGoal(0);
+    swerveModules[1].setAngleGoal(0);
+    swerveModules[2].setAngleGoal(0);
+    swerveModules[3].setAngleGoal(0);
   }
 
-  public void drive2(double rotation) {
-    swerveModules[0].turn(rotation);
-    swerveModules[1].turn(rotation);
-    swerveModules[2].turn(rotation);
-    swerveModules[3].turn(rotation);
+  public boolean checkyCheckCheck() {
+    swerveModules[0].checkAngleSupplier();
+    swerveModules[1].checkAngleSupplier();
+    swerveModules[2].checkAngleSupplier();
+    swerveModules[3].checkAngleSupplier();
+
+    return checkyCheckCheck();
   }
+
+  public boolean check() {
+    if (checkyCheckCheck() == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  
+  public void drive505(double speed) {
+    swerveModules[0].set(speed);
+    swerveModules[1].set(speed);
+    swerveModules[2].set(speed);
+    swerveModules[3].set(speed);
+  }
+
+  /*public void setAngle(double setpoint) {
+    swerveModules[0].setAngleGoal(setpoint);
+    swerveModules[1].setAngle(setpoint);
+    swerveModules[2].setAngle(setpoint);
+    swerveModules[3].setAngle(setpoint);
+  }*/
 }

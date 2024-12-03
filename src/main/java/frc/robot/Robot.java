@@ -4,13 +4,7 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfigurator;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -50,14 +44,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // encoder code
-    absoluteEncoder = new CANcoder(9);
-    CANcoderConfigurator cfg = absoluteEncoder.getConfigurator();
-    MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs();
-    cfg.refresh(magnetSensorConfigs);
-    cfg.apply(
-        magnetSensorConfigs
-            .withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1)
-            .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
@@ -73,10 +59,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // enoder code
-    StatusSignal<Double> angle = absoluteEncoder.getAbsolutePosition().waitForUpdate(0.1);
-    System.out.println(
-        "Absolute Encoder Angle (degrees)" + Units.rotationsToDegrees(angle.getValue()));
 
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
