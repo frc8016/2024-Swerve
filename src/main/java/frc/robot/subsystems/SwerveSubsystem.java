@@ -4,10 +4,10 @@ import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -165,58 +165,19 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveModules[3].stop();
   }
 
-  public void setModuleStates(SwerveModuleState[] desiredState) {
-    // SwerveDriveKinematics.normalizeWheelSpeeds(desiredState, SwerveDriveConstants.kMaxSpeed);
-    swerveModules[0].setDesiredState(desiredState[0]);
-    swerveModules[1].setDesiredState(desiredState[1]);
-    swerveModules[2].setDesiredState(desiredState[2]);
-    swerveModules[3].setDesiredState(desiredState[3]);
-  }
- 
-
-  public void drive1() {
-    swerveModules[0].moveToAngle();
-    swerveModules[1].moveToAngle();
-    swerveModules[2].moveToAngle();
-    swerveModules[3].moveToAngle();
-  }
-
-  public void setGoalAngle(double setpoint) {
-    swerveModules[0].setAngleGoal(0);
-    swerveModules[1].setAngleGoal(0);
-    swerveModules[2].setAngleGoal(0);
-    swerveModules[3].setAngleGoal(0);
-  }
-
-  public boolean checkyCheckCheck() {
-    swerveModules[0].checkAngleSupplier();
-    swerveModules[1].checkAngleSupplier();
-    swerveModules[2].checkAngleSupplier();
-    swerveModules[3].checkAngleSupplier();
-
-    return checkyCheckCheck();
-  }
-
-  public boolean check() {
-    if (checkyCheckCheck() == true) {
-      return true;
-    } else {
-      return false;
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldReletive) {
+    var chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
+    if (fieldReletive) {
+      ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, getRotation2d());
     }
-  }
+    ChassisSpeeds.discretize(chassisSpeeds, .1);
+    var swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
+    double kMaxSpeed = .5;
+    kinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
 
-  
-  public void drive505(double speed) {
-    swerveModules[0].set(speed);
-    swerveModules[1].set(speed);
-    swerveModules[2].set(speed);
-    swerveModules[3].set(speed);
+    swerveModules[0].setDesiredState(swerveModuleStates[0]);
+    swerveModules[1].setDesiredState(swerveModuleStates[1]);
+    swerveModules[2].setDesiredState(swerveModuleStates[2]);
+    swerveModules[3].setDesiredState(swerveModuleStates[3]);
   }
-
-  /*public void setAngle(double setpoint) {
-    swerveModules[0].setAngleGoal(setpoint);
-    swerveModules[1].setAngle(setpoint);
-    swerveModules[2].setAngle(setpoint);
-    swerveModules[3].setAngle(setpoint);
-  }*/
 }

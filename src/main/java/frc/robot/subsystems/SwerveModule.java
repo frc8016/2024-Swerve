@@ -10,9 +10,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import java.util.function.BooleanSupplier;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+
 // imports
 
 public class SwerveModule {
@@ -25,9 +29,13 @@ public class SwerveModule {
 
   private final CANcoder absoluteEncoder;
 
-  private PIDController turningPidController; // sobbing idk how to do pid well somebosy help me
+  private PIDController m_drivePIDController; // sobbing idk how to do pid well somebosy help me
 
+  private final ProfiledPIDController m_turningPIDController =
+      new ProfiledPIDController(0.1, 0.1, 0.1, new TrapezoidProfile.Constraints(3, 2));
 
+  private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(0.1, 0.1);
+  private final SimpleMotorFeedforward m_steerFeedforward = new SimpleMotorFeedforward(0.1, 0.1);
 
   private static Double absoluteEncoderAngleOfOffset;
 
@@ -83,13 +91,44 @@ public class SwerveModule {
 
     // add conversion factors
     // add PID control
-    turningPidController = new PIDController(0.1, 0.0, 0);
-    turningPidController.enableContinuousInput(-Math.PI, Math.PI);
+    // turningPidController = new PIDController(0.1, 0.0, 0);
+    m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     // reset encoders
     resetEncoders();
   }
-  
+
+  // gets the state
+  public SwerveModuleState getStates() {
+    return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getSteerPosition()));
+  }
+
+  public SwerveModulePosition getPosition() {
+    return new SwerveModulePosition(getDriveVelocity(), new Rotation2d(getSteerPosition()));
+  }
+
+  public void setDesiredState(SwerveModuleState desiredState) {
+    var encoderRotation = new Rotation2d(getSteerPosition());
+
+    SwerveModuleState.optimize(desiredState, encoderRotation);
+
+    // desiredState.cosineScale(encoderRotation);
+
+    final double driveOutput =
+        m_drivePIDController.calculate(getDriveVelocity(), desiredState.speedMetersPerSecond);
+
+    final double driveFeedforward = m_driveFeedforward.calculate(desiredState.speedMetersPerSecond);
+
+    final double turnOutput =
+        m_turningPIDController.calculate(getSteerPosition(), desiredState.angle.getRadians());
+
+    final double turnFeedForward =
+        m_steerFeedforward.calculate((m_turningPIDController.getSetpoint().velocity));
+
+    driveMotor.setVoltage(driveOutput + driveFeedforward);
+    steerMotor.setVoltage(turnOutput + turnFeedForward);
+  }
+
   // returns the drive motors embeded encoder position
   // also wth vs code stop making errors where there arent any
   public double getDrivePosition() {
@@ -135,10 +174,6 @@ public class SwerveModule {
     steerMotor.setPosition(getAbsoluteEncoderRad());
   }
 
-  // gets the state
-  public SwerveModuleState getStates() {
-    return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getSteerPosition()));
-  }
   // gets the rotations or something
   public StatusSignal<Double> getDistance() {
     return driveMotor.getPosition();
@@ -148,78 +183,13 @@ public class SwerveModule {
     return Rotation2d.fromRadians(steerMotor.getPosition().getValue());
   }
   // makeies the state
-  public void setState(SwerveModuleState state) {
-    double tragetSpeed = state.speedMetersPerSecond;
-    double targetAngle = state.angle.getRadians(); // degrees or radians?  Radians :)
-    // am i using these anywhare?
-    double targetVelocity = tragetSpeed / driveConversionFactor;
-    double targetSteerAngle = targetAngle * (STEER_ENCODER_TPR / 2 * Math.PI);
 
-    // set target velocity
-    driveMotor.set(targetVelocity);
-
-    // set target angle
-    steerMotor.set(targetSteerAngle);
-  }
   // tells it the state we want it to be in
-  public void setDesiredState(SwerveModuleState state) {
-     if (Math.abs(state.speedMetersPerSecond) < 0.001) {
-      stop();
-      return;
-    }
-    state = SwerveModuleState.optimize(state, getStates().angle);
 
-    driveMotor.set(
-        state.speedMetersPerSecond); // (speed / contant(max speed (set it hella low to start)))
-
-    steerMotor.set(
-        turningPidController.calculate(
-            reZeroEncoder(), state.angle.getRadians()));// pid controller ahhhhhhhh!!!!!!!!
-
-  return;
-  }
   // reports you on stopit
   // yes I think im funny
   public void stop() {
     driveMotor.set(0);
     steerMotor.set(0);
-  }
-
-  public void setAngleGoal(double setpoint) {
-    turningPidController.setSetpoint(setpoint);
-  }
-
-  public double getSetpoint() {
-    return turningPidController.getSetpoint();
-  }
-
-  public void setSetpoint() {
-    turningPidController.setSetpoint(1);
-  }
-
-  // gets the postion and checks if it == the goal yadayada
-  public boolean checkAnglePosition() {
-    if (reZeroEncoder() == getSetpoint()) {
-      return true;
-    } else if (reZeroEncoder() != getSetpoint()) {
-      return false;
-    }
-    return checkAnglePosition();
-  }
-
-  public BooleanSupplier checkAngleSupplier() {
-    return (() -> checkAnglePosition());
-  }
-
-  public void moveToAngle() {
-    if (checkAnglePosition() == false) {
-      steerMotor.set(.1);
-    } else {
-      stop();
-    }
-  }
-
-  public void set(double speed) {
-    steerMotor.set(speed);
   }
 }

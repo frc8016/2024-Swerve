@@ -70,7 +70,7 @@ public class SwerveJoystickCmd extends Command {
         SwerveSubsystem.kinematics.toSwerveModuleStates(chassisSpeeds);
 
     // output module states to wheels
-    swerveSubsystem.setModuleStates(moduleStates);
+
   }
 
   @Override
