@@ -173,7 +173,7 @@ public class SwerveSubsystem extends SubsystemBase {
     ChassisSpeeds.discretize(chassisSpeeds, .1);
     var swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
     double kMaxSpeed = .5;
-    kinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
 
     swerveModules[0].setDesiredState(swerveModuleStates[0]);
     swerveModules[1].setDesiredState(swerveModuleStates[1]);
